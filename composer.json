@@ -1,0 +1,48 @@
+{
+    "name" : "oat-sa/extension-tao-mobile-app",
+    "description" : "Extension providing tools dedicated to operations.",
+    "type" : "tao-extension",
+    "extra" : {
+		"tao-extension-name" : "taoMobileApp"
+	},
+    "authors" : [
+        {
+            "name" : "Open Assessment Technologies S.A.",
+            "homepage" : "http://www.taotesting.com"
+        }
+    ],
+    "support": {
+        "forum": "http://forum.taotesting.com",
+        "issues": "http://forge.taotesting.com"
+    },
+    "keywords" : [
+        "tao",
+        "oat",
+        "ingestion",
+        "test taker",
+        "group",
+        "test",
+        "QTI",
+        "delivery",
+        "computer-based-assessment"
+    ],
+    "homepage" : "http://www.taotesting.com",
+    "license" : [
+        "Proprietary"
+    ],
+    "require" : {
+        "php" : ">=5.6",
+        "ext-zip": "*",
+        "oat-sa/oatbox-extension-installer": "dev-master",
+        "oat-sa/generis-auth-keyvalue": "*"
+    },
+    "require-dev": {
+        "mikey179/vfsStream": "^1.4.0"
+    },
+    "minimum-stability" : "dev",
+    "autoload" : {
+        "psr-4" : {
+            "oat\\taoOperations\\" : ""
+        }
+    }
+}
