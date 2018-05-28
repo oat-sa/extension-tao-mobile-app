@@ -11,6 +11,7 @@ return [
     'version' => '0.1.0',
     'author' => 'Open Assessment Technologies',
     'requires' => [
+        'taoCe' => '3.18.0',
         'tao' => '>=19.1.0'
     ],
     'acl' => [],
