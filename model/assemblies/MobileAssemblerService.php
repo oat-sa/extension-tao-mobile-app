@@ -5,6 +5,8 @@ namespace oat\taoMobileApp\model\assemblies;
 use core_kernel_classes_Resource;
 use oat\oatbox\user\User;
 use oat\taoDelivery\model\AssignmentService;
+use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
+use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteService;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\StateServiceInterface;
 use oat\taoDeliveryRdf\model\guest\GuestTestUser;
@@ -34,7 +36,7 @@ class MobileAssemblerService extends AssemblerService
             $deliveryExecution = $this->createDeliveryExecution($compiledDelivery, $user);
 
             // 2. Retrieve QTI Test Runner context information.
-            $runnerContext = $this->retrieveRunnerContext($compiledDelivery, $deliveryExecution, $user);
+            $runnerContext = $this->retrieveRunnerContext($deliveryExecution, $user);
 
             // 3. Initialize QTI Test Runner execution.
             /** @var QtiRunnerService $runnerService */
@@ -47,7 +49,11 @@ class MobileAssemblerService extends AssemblerService
 
             // 5. Finalize assembly.
             $zipArchive->addFromString('testData.json', json_encode($testDataStructure, JSON_PRETTY_PRINT));
-        } catch (\common_Exception $e) {
+
+            // 6. Delete execution data.
+            $this->removeExecutionData($deliveryExecution, $runnerContext);
+
+        } catch (\Exception $e) {
             throw new \common_Exception(
                 "An unexpected error occurred while instantiating the TAO Mobile App Assembly Delivery execution.",
                 0,
@@ -72,7 +78,6 @@ class MobileAssemblerService extends AssemblerService
     }
 
     /**
-     * @param core_kernel_classes_Resource $compiledDelivery
      * @param DeliveryExecutionInterface $deliveryExecution
      * @param User $user
      * @return \oat\taoQtiTest\models\runner\QtiRunnerServiceContext
@@ -80,11 +85,11 @@ class MobileAssemblerService extends AssemblerService
      * @throws \common_exception_Error
      * @throws \common_exception_NotFound
      */
-    protected function retrieveRunnerContext(core_kernel_classes_Resource $compiledDelivery, DeliveryExecutionInterface $deliveryExecution, User $user)
+    protected function retrieveRunnerContext(DeliveryExecutionInterface $deliveryExecution, User $user)
     {
         /** @var AssignmentService $assignmentService */
         $assignmentService = $this->getServiceLocator()->get(AssignmentService::SERVICE_ID);
-        $runtime = $assignmentService->getRuntime($compiledDelivery->getUri());
+        $runtime = $assignmentService->getRuntime($deliveryExecution->getDelivery()->getUri());
         $contextParams = \tao_models_classes_service_ServiceCallHelper::getInputValues($runtime, []);
 
         /** @var QtiRunnerService $runnerService */
@@ -117,5 +122,22 @@ class MobileAssemblerService extends AssemblerService
         );
 
         return $deliveryExecution;
+    }
+
+    /**
+     * @param DeliveryExecutionInterface $deliveryExecution
+     * @param RunnerServiceContext $runnerServiceContext
+     * @throws \Exception
+     */
+    protected function removeExecutionData(DeliveryExecutionInterface $deliveryExecution, RunnerServiceContext $runnerServiceContext)
+    {
+        /** @var DeliveryExecutionDeleteService $deleteDeliveryExecutionService */
+        $deleteDeliveryExecutionService = $this->getServiceLocator()->get(DeliveryExecutionDeleteService::SERVICE_ID);
+        $deleteDeliveryExecutionRequest = new DeliveryExecutionDeleteRequest(
+            $deliveryExecution->getDelivery(),
+            $deliveryExecution,
+            $runnerServiceContext->getTestSession()
+        );
+        $deleteDeliveryExecutionService->execute($deleteDeliveryExecutionRequest);
     }
 }
