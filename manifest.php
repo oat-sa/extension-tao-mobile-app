@@ -14,6 +14,12 @@ return [
         'taoCe' => '3.18.0',
         'tao' => '>=19.1.0'
     ],
+    'install' => [
+        'php' => [
+            oat\taoQtiTest\scripts\install\SetNewTestRunner::class,
+            oat\taoMobileApp\scripts\install\RegisterMobileAssemblerService::class
+        ]
+    ],
     'acl' => [],
     'routes' => [],
     'update' => 'oat\\taoMobileApp\\scripts\\update\\Updater'
