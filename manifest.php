@@ -8,7 +8,7 @@ return [
     'label' => 'TAO Mobile App',
     'description' => 'Extension providing server-side components for the TAO Mobile App.',
     'license' => 'Proprietary',
-    'version' => '0.1.0',
+    'version' => '1.0.0',
     'author' => 'Open Assessment Technologies',
     'requires' => [
         'taoCe' => '3.18.0',
