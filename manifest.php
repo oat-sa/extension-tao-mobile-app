@@ -12,7 +12,8 @@ return [
     'author' => 'Open Assessment Technologies',
     'requires' => [
         'taoCe' => '3.18.0',
-        'tao' => '>=19.1.0'
+        'tao' => '>=19.1.0',
+        'taoDeliveryRdf' => '5.0.0'
     ],
     'install' => [
         'php' => [
