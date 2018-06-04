@@ -2,17 +2,22 @@
 
 namespace oat\taoMobileApp\model\assemblies;
 
+use qtism\data\AssessmentTest;
+use qtism\data\storage\php\PhpDocument;
+
 class AssembliesUtils
 {
     public static function transformToMobileAssembly(\ZipArchive $zipArchive)
     {
         $files = \tao_helpers_File::getAllZipNames($zipArchive);
-        $map = self::sortItemAssemblyFiles($zipArchive, $files);
+        $manifest = json_decode($zipArchive->getFromName('manifest.json'), true);
+        $map = self::sortItemAssemblyFiles($zipArchive, $files, $manifest);
+        $testDefinition = self::getTestDefinition($zipArchive, $files);
+
         $renameMap = [];
         foreach ($map as $privatePath => $publicPath) {
-            $jsonItem = json_decode($zipArchive->getFromName("${privatePath}/en-US/item.json"), true);
-            $itemIdentifier = self::getItemIdentifierFromJson($jsonItem);
 
+            $itemIdentifier = self::getItemIdentifierFromPrivatePath($privatePath, $manifest, $testDefinition->getDocumentComponent());
             $itemLanguages = self::getLanguagesFromItemPrivateDirectory($files, $privatePath);
             $itemLanguagesToExclude = [];
 
@@ -54,9 +59,8 @@ class AssembliesUtils
         \tao_helpers_File::excludeFromZip($zipArchive, '/\/$/');
     }
 
-    public static function sortItemAssemblyFiles(\ZipArchive $zipArchive, array $files)
+    private static function sortItemAssemblyFiles(\ZipArchive $zipArchive, array $files, array $manifest)
     {
-        $manifest = json_decode($zipArchive->getFromName('manifest.json'), true);
         $keys = array_keys($manifest['dir']);
         $map = [];
 
@@ -81,7 +85,7 @@ class AssembliesUtils
         return $map;
     }
 
-    public static function isItemPrivateDirectory(array $zipFiles, $path)
+    private static function isItemPrivateDirectory(array $zipFiles, $path)
     {
         foreach ($zipFiles as $zipFile) {
             $quotedPath = preg_quote($path . '/', '/');
@@ -96,7 +100,7 @@ class AssembliesUtils
         return false;
     }
 
-    public static function isDirectoryAvailable(array $zipFiles, $path)
+    private static function isDirectoryAvailable(array $zipFiles, $path)
     {
         foreach ($zipFiles as $zipFile) {
             $quotedPath = preg_quote($path, '/');
@@ -110,16 +114,21 @@ class AssembliesUtils
         return false;
     }
 
-    public static function getItemIdentifierFromJson($jsonItem)
+    private static function getItemIdentifierFromPrivatePath($path, array $map, AssessmentTest $assessmentTest)
     {
-        if (isset($jsonItem['data']) && isset($jsonItem['data']['identifier'])) {
-            return $jsonItem['data']['identifier'];
-        } else {
-            return false;
+        $privateDir = array_search($path, $map['dir']);
+
+        foreach ($assessmentTest->getComponentsByClassName('assessmentItemRef') as $itemRef) {
+            $parts = explode('|', $itemRef->getHref());
+            if ($privateDir === $parts[2]) {
+                return $itemRef->getIdentifier();
+            }
         }
+
+        return false;
     }
 
-    public static function getLanguagesFromItemPrivateDirectory(array $zipFiles, $path)
+    private static function getLanguagesFromItemPrivateDirectory(array $zipFiles, $path)
     {
         $languages = [];
 
@@ -134,5 +143,19 @@ class AssembliesUtils
         }
 
         return array_unique($languages);
+    }
+
+    private static function getTestDefinition(\ZipArchive $zipArchive, array $zipFiles)
+    {
+        foreach ($zipFiles as $zipFile) {
+            if (preg_match('/' . preg_quote(\taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_FILENAME) . '$/', $zipFile) === 1) {
+                $testDefinition = new PhpDocument();
+                $testDefinition->loadFromString($zipArchive->getFromName($zipFile));
+
+                return $testDefinition;
+            }
+        }
+
+        return null;
     }
 }
