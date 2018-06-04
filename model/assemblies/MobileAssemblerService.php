@@ -17,13 +17,26 @@ use oat\taoDeliveryRdf\model\import\AssemblerService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 
+/**
+ * Class MobileAssemblerService
+ *
+ * An extension of the TAO AssemblerService class aiming at compiling Mobile App compliant
+ * Delivery Assemblies.
+ *
+ * @package oat\taoMobileApp\model\assemblies
+ */
 class MobileAssemblerService extends AssemblerService
 {
     /**
+     * Export Compiled Mobile App compliant delivery
+     *
+     * This method performs the additional behaviour to make a TAO Assembly compliant
+     * with the TAO Mobile App.
+     *
      * @param string $path
      * @param core_kernel_classes_Resource $compiledDelivery
      * @param \ZipArchive $zipArchive
-     * @throws \common_Exception
+     * @throws \Exception
      */
     protected function doExportCompiledDelivery($path, core_kernel_classes_Resource $compiledDelivery, \ZipArchive $zipArchive)
     {

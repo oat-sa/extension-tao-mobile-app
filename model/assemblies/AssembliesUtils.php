@@ -8,8 +8,24 @@ namespace oat\taoMobileApp\model\assemblies;
 use qtism\data\AssessmentTest;
 use qtism\data\storage\php\PhpDocument;
 
+/***
+ *
+ * Class AssembliesUtils
+ *
+ * This class provides utility methods to deal with Mobile App compliant assemblies.
+ *
+ * @package oat\taoMobileApp\model\assemblies
+ */
 class AssembliesUtils
 {
+    /**
+     * Transform to Mobile Assembly
+     *
+     * Transforms a given TAO Assembly archive into a Mobile App compliant Assembly archive.
+     *
+     * @param \ZipArchive $zipArchive
+     * @throws \Exception
+     */
     public static function transformToMobileAssembly(\ZipArchive $zipArchive)
     {
         $files = \tao_helpers_File::getAllZipNames($zipArchive);
@@ -62,6 +78,12 @@ class AssembliesUtils
         \tao_helpers_File::excludeFromZip($zipArchive, '/\/$/');
     }
 
+    /**
+     * @param \ZipArchive $zipArchive
+     * @param array $files
+     * @param array $manifest
+     * @return array
+     */
     private static function sortItemAssemblyFiles(\ZipArchive $zipArchive, array $files, array $manifest)
     {
         $keys = array_keys($manifest['dir']);
@@ -88,6 +110,11 @@ class AssembliesUtils
         return $map;
     }
 
+    /**
+     * @param array $zipFiles
+     * @param string $path
+     * @return bool
+     */
     private static function isItemPrivateDirectory(array $zipFiles, $path)
     {
         foreach ($zipFiles as $zipFile) {
@@ -103,6 +130,11 @@ class AssembliesUtils
         return false;
     }
 
+    /**
+     * @param array $zipFiles
+     * @param string $path
+     * @return bool
+     */
     private static function isDirectoryAvailable(array $zipFiles, $path)
     {
         foreach ($zipFiles as $zipFile) {
@@ -117,6 +149,12 @@ class AssembliesUtils
         return false;
     }
 
+    /**
+     * @param string $path
+     * @param array $map
+     * @param AssessmentTest $assessmentTest
+     * @return bool
+     */
     private static function getItemIdentifierFromPrivatePath($path, array $map, AssessmentTest $assessmentTest)
     {
         $privateDir = array_search($path, $map['dir']);
@@ -131,6 +169,11 @@ class AssembliesUtils
         return false;
     }
 
+    /**
+     * @param array $zipFiles
+     * @param string $path
+     * @return array
+     */
     private static function getLanguagesFromItemPrivateDirectory(array $zipFiles, $path)
     {
         $languages = [];
@@ -148,6 +191,12 @@ class AssembliesUtils
         return array_unique($languages);
     }
 
+    /**
+     * @param \ZipArchive $zipArchive
+     * @param array $zipFiles
+     * @return null|PhpDocument
+     * @throws \qtism\data\storage\php\PhpStorageException
+     */
     private static function getTestDefinition(\ZipArchive $zipArchive, array $zipFiles)
     {
         foreach ($zipFiles as $zipFile) {
