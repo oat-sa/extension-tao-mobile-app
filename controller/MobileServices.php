@@ -5,11 +5,18 @@
 
 namespace oat\taoMobileApp\controller;
 
-
 use oat\taoDeliveryRdf\model\AssemblerServiceInterface;
 
 class MobileServices extends \tao_actions_RestController
 {
+    /**
+     * @return array
+     */
+    protected function getAcceptableMimeTypes()
+    {
+        return ['application/zip'];
+    }
+
     /**
      * @throws \common_exception_BadRequest
      * @throws \common_exception_MethodNotAllowed
@@ -37,16 +44,17 @@ class MobileServices extends \tao_actions_RestController
         try {
             /** @var AssemblerServiceInterface $assemblerService */
             $assemblerService = $this->getServiceLocator()->get(AssemblerServiceInterface::SERVICE_ID);
-            $fileSystem = $assemblerService->getFileSystem();
+            $fsDirectory = $assemblerService->getExportDirectory();
 
             // Export mobile assembly in shared file system (if not already done).
             $fsExportPath = self::fsExportPath($deliveryIdentifier);
-            if (!$fileSystem->has($fsExportPath)) {
+            $fsFile = $fsDirectory->getFile($fsExportPath);
+            if (!$fsFile->exists()) {
                 $assemblerService->exportCompiledDelivery($deliveryResource, $fsExportPath);
             }
 
             // Return archive to invoker.
-            \tao_helpers_Http::returnStream($fileSystem->readStream($fsExportPath));
+            \tao_helpers_Http::returnStream($fsFile->readPsrStream());
         } catch (\Exception $e) {
             $this->returnFailure($e);
         }
