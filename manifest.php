@@ -11,10 +11,11 @@ return [
     'version' => '1.0.0',
     'author' => 'Open Assessment Technologies',
     'requires' => [
-        'taoCe' => '3.18.0',
+        'taoCe' => '>=3.18.0',
         'tao' => '>=19.1.0',
-        'taoDelivery' => '9.12.0',
-        'taoDeliveryRdf' => '5.0.0'
+        'taoQtiTest' => '>=25.7.0',
+        'taoDelivery' => '>=9.12.0',
+        'taoDeliveryRdf' => '>=5.0.0'
     ],
     'install' => [
         'php' => [
