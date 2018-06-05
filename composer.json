@@ -17,13 +17,6 @@
     },
     "keywords" : [
         "tao",
-        "oat",
-        "ingestion",
-        "test taker",
-        "group",
-        "test",
-        "QTI",
-        "delivery",
         "computer-based-assessment"
     ],
     "homepage" : "http://www.taotesting.com",
@@ -31,18 +24,12 @@
         "Proprietary"
     ],
     "require" : {
-        "php" : ">=5.6",
-        "ext-zip": "*",
-        "oat-sa/oatbox-extension-installer": "dev-master",
-        "oat-sa/generis-auth-keyvalue": "*"
-    },
-    "require-dev": {
-        "mikey179/vfsStream": "^1.4.0"
+        "php" : ">=5.6"
     },
     "minimum-stability" : "dev",
     "autoload" : {
         "psr-4" : {
-            "oat\\taoOperations\\" : ""
+            "oat\\taoMobileApp\\" : ""
         }
     }
 }
