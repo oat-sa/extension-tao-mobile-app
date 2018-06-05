@@ -27,7 +27,9 @@ return [
     'acl' => [
         ['grant', 'http://www.tao.lu/Ontologies/TAOMobileApp.rdf#TaoMobileAppManagerRole', ['ext'=>'taoMobileApp']]
     ],
-    'routes' => [],
+    'routes' => [
+        '/taoMobileApp' => 'oat\\taoMobileApp\\controller'
+    ],
     'update' => 'oat\\taoMobileApp\\scripts\\update\\Updater',
     'managementRole' => 'http://www.tao.lu/Ontologies/TAOMobileApp.rdf#TaoMobileAppManagerRole'
 ];
