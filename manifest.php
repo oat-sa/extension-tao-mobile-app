@@ -24,7 +24,9 @@ return [
             oat\taoMobileApp\scripts\install\RegisterDeleteDeliveryExecutionService::class
         ]
     ],
-    'acl' => [],
+    'acl' => [
+        ['grant', 'http://www.tao.lu/Ontologies/TAOMobileApp.rdf#TaoMobileAppManagerRole', ['ext'=>'taoMobileApp']]
+    ],
     'routes' => [],
     'update' => 'oat\\taoMobileApp\\scripts\\update\\Updater',
     'managementRole' => 'http://www.tao.lu/Ontologies/TAOMobileApp.rdf#TaoMobileAppManagerRole'
