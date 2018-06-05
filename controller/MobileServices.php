@@ -39,9 +39,11 @@ class MobileServices extends \tao_actions_RestController
             $assemblerService = $this->getServiceLocator()->get(AssemblerServiceInterface::SERVICE_ID);
             $fileSystem = $assemblerService->getFileSystem();
 
-            // Export mobile assembly in shared file system.
+            // Export mobile assembly in shared file system (if not already done).
             $fsExportPath = self::fsExportPath($deliveryIdentifier);
-            $assemblerService->exportCompiledDelivery($deliveryResource, $fsExportPath);
+            if (!$fileSystem->has($fsExportPath)) {
+                $assemblerService->exportCompiledDelivery($deliveryResource, $fsExportPath);
+            }
 
             // Return archive to invoker.
             \tao_helpers_Http::returnStream($fileSystem->readStream($fsExportPath));
