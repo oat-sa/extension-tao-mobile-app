@@ -23,5 +23,6 @@ return [
     ],
     'acl' => [],
     'routes' => [],
-    'update' => 'oat\\taoMobileApp\\scripts\\update\\Updater'
+    'update' => 'oat\\taoMobileApp\\scripts\\update\\Updater',
+    'managementRole' => 'http://www.tao.lu/Ontologies/TAOMobileApp.rdf#TaoMobileAppManagerRole'
 ];
