@@ -6,6 +6,7 @@
 namespace oat\taoMobileApp\model\assemblies;
 
 use core_kernel_classes_Resource;
+use oat\oatbox\log\LoggerAwareTrait;
 use oat\oatbox\user\User;
 use oat\taoDelivery\model\AssignmentService;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
@@ -27,6 +28,8 @@ use oat\taoQtiTest\models\runner\RunnerServiceContext;
  */
 class MobileAssemblerService extends AssemblerService
 {
+    use LoggerAwareTrait;
+
     /**
      * Export Compiled Mobile App compliant delivery
      *
@@ -41,6 +44,9 @@ class MobileAssemblerService extends AssemblerService
     protected function doExportCompiledDelivery($path, core_kernel_classes_Resource $compiledDelivery, \ZipArchive $zipArchive)
     {
         parent::doExportCompiledDelivery($path, $compiledDelivery, $zipArchive);
+
+        $this->logDebug("Transforming Delivery Assembly '" . $compiledDelivery->getUri() . "' into a Mobile Assembly...");
+
         AssembliesUtils::transformToMobileAssembly($zipArchive);
 
         // We now have to instantiate a Delivery Execution of this Delivery, in order to be able
@@ -84,6 +90,8 @@ class MobileAssemblerService extends AssemblerService
      */
     protected function buildRuntimeData(RunnerServiceContext $runnerServiceContext)
     {
+        $this->logDebug('Building runtime data...');
+
         $runnerService = $this->getServiceLocator()->get(QtiRunnerService::SERVICE_ID);
 
         return [
@@ -103,6 +111,8 @@ class MobileAssemblerService extends AssemblerService
      */
     protected function retrieveRunnerContext(DeliveryExecutionInterface $deliveryExecution, User $user)
     {
+        $this->logDebug("Retrieving Test Runner context for Delivery Execution '" . $deliveryExecution->getIdentifier() . "' and Guest User '" . $user->getIdentifier() . "'...");
+
         /** @var AssignmentService $assignmentService */
         $assignmentService = $this->getServiceLocator()->get(AssignmentService::SERVICE_ID);
         $runtime = $assignmentService->getRuntime($deliveryExecution->getDelivery()->getUri());
@@ -127,6 +137,8 @@ class MobileAssemblerService extends AssemblerService
      */
     protected function createDeliveryExecution(core_kernel_classes_Resource $compiledDelivery, User $user)
     {
+        $this->logDebug("Creating Delivery Execution for Delivery Assembly '" . $compiledDelivery->getUri() . "'...");
+
         $deliveryUri = $compiledDelivery->getUri();
 
         /** @var StateServiceInterface $stateService */
@@ -147,6 +159,8 @@ class MobileAssemblerService extends AssemblerService
      */
     protected function removeExecutionData(DeliveryExecutionInterface $deliveryExecution, RunnerServiceContext $runnerServiceContext)
     {
+        $this->logDebug("Removing Delivery Execution data from storage for Delivery Execution '" . $deliveryExecution->getIdentifier() . "'...");
+
         /** @var DeliveryExecutionDeleteService $deleteDeliveryExecutionService */
         $deleteDeliveryExecutionService = $this->getServiceLocator()->get(DeliveryExecutionDeleteService::SERVICE_ID);
         $deleteDeliveryExecutionRequest = new DeliveryExecutionDeleteRequest(
