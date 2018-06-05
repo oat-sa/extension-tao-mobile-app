@@ -41,17 +41,17 @@ class AssembliesUtilsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($zipArchive->getFromName('delivery.rdf'));
         $this->assertFalse($zipArchive->getFromName('manifest.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q01/item.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q01/portableElements.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q01/variableElements.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q01/oat-300x150.png'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q01/tao-user-styles.css'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q02/item.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q02/portableElements.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q02/variableElements.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q03/item.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q03/portableElements.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q03/variableElements.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q01/item.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q01/portableElements.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q01/variableElements.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q01/oat-300x150.png'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q01/tao-user-styles.css'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q02/item.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q02/portableElements.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q02/variableElements.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q03/item.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q03/portableElements.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q03/variableElements.json'));
 
         $zipArchive->close();
     }
@@ -73,17 +73,17 @@ class AssembliesUtilsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($zipArchive->getFromName('delivery.rdf'));
         $this->assertFalse($zipArchive->getFromName('manifest.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q01/item.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q01/portableElements.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q01/variableElements.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q01/oat-300x150.png'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q01/tao-user-styles.css'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q02/item.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q02/portableElements.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q02/variableElements.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q03/item.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q03/portableElements.json'));
-        $this->assertNotFalse($zipArchive->getFromName('Item-Q03/variableElements.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q01/item.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q01/portableElements.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q01/variableElements.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q01/oat-300x150.png'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q01/tao-user-styles.css'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q02/item.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q02/portableElements.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q02/variableElements.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q03/item.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q03/portableElements.json'));
+        $this->assertNotFalse($zipArchive->getFromName('items/Item-Q03/variableElements.json'));
 
         $zipArchive->close();
     }

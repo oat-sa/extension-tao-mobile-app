@@ -50,10 +50,10 @@ class AssembliesUtils
                 \tao_helpers_File::excludeFromZip($zipArchive, "/${quoted}.+/");
             }
 
-            $renameMap[$privatePath . '/' . $itemLanguages[0]] = $itemIdentifier;
+            $renameMap[$privatePath . '/' . $itemLanguages[0]] = "items/${itemIdentifier}";
 
             if ($publicPath !== null) {
-                $renameMap[$publicPath . '/' . $itemLanguages[0]] = $itemIdentifier;
+                $renameMap[$publicPath . '/' . $itemLanguages[0]] = "items/${itemIdentifier}";
 
                 foreach ($itemLanguagesToExclude as $itemLanguageToExclude) {
                     $quoted = preg_quote("${publicPath}/${itemLanguageToExclude}/", '/');
