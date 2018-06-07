@@ -20,7 +20,8 @@ return [
     'install' => [
         'php' => [
             oat\taoQtiTest\scripts\install\SetNewTestRunner::class,
-            oat\taoMobileApp\scripts\install\RegisterDeleteDeliveryExecutionService::class
+            oat\taoMobileApp\scripts\install\RegisterDeleteDeliveryExecutionService::class,
+            oat\taoMobileApp\scripts\install\RegisterFileSystem::class
         ]
     ],
     'acl' => [
