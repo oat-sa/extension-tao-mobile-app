@@ -7,26 +7,28 @@ namespace oat\taoMobileApp\model\assemblies;
 
 use core_kernel_classes_Resource;
 use oat\oatbox\log\LoggerAwareTrait;
+use oat\oatbox\service\ConfigurableService;
 use oat\oatbox\user\User;
 use oat\taoDelivery\model\AssignmentService;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteService;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\StateServiceInterface;
+use oat\taoDeliveryRdf\model\AssemblerServiceInterface;
 use oat\taoDeliveryRdf\model\guest\GuestTestUser;
 use oat\taoDeliveryRdf\model\import\AssemblerService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 
 /**
- * Class MobileAssemblerService
+ * Class MobileAssembler
  *
  * An extension of the TAO AssemblerService class aiming at compiling Mobile App compliant
  * Delivery Assemblies.
  *
  * @package oat\taoMobileApp\model\assemblies
  */
-class MobileAssemblerService extends AssemblerService
+class MobileAssembler extends ConfigurableService
 {
     use LoggerAwareTrait;
 
@@ -41,7 +43,7 @@ class MobileAssemblerService extends AssemblerService
      * @param \ZipArchive $zipArchive
      * @throws \Exception
      */
-    protected function doExportCompiledDelivery($path, core_kernel_classes_Resource $compiledDelivery, \ZipArchive $zipArchive)
+    public function doExportCompiledDelivery($path, core_kernel_classes_Resource $compiledDelivery, \ZipArchive $zipArchive)
     {
         parent::doExportCompiledDelivery($path, $compiledDelivery, $zipArchive);
 
