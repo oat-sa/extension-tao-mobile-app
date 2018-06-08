@@ -6,44 +6,52 @@
 namespace oat\taoMobileApp\model\assemblies;
 
 use core_kernel_classes_Resource;
+use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\log\LoggerAwareTrait;
+use oat\oatbox\service\ConfigurableService;
 use oat\oatbox\user\User;
 use oat\taoDelivery\model\AssignmentService;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteRequest;
 use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteService;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\StateServiceInterface;
+use oat\taoDeliveryRdf\model\AssemblerServiceInterface;
 use oat\taoDeliveryRdf\model\guest\GuestTestUser;
-use oat\taoDeliveryRdf\model\import\AssemblerService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 
 /**
- * Class MobileAssemblerService
+ * Class MobileAssembler
  *
  * An extension of the TAO AssemblerService class aiming at compiling Mobile App compliant
  * Delivery Assemblies.
  *
  * @package oat\taoMobileApp\model\assemblies
  */
-class MobileAssemblerService extends AssemblerService
+class MobileAssembler extends ConfigurableService
 {
     use LoggerAwareTrait;
 
+    const SERVICE_ID = 'taoMobileApp/MobileAssembler';
+
     /**
-     * Export Compiled Mobile App compliant delivery
-     *
-     * This method performs the additional behaviour to make a TAO Assembly compliant
-     * with the TAO Mobile App.
-     *
-     * @param string $path
      * @param core_kernel_classes_Resource $compiledDelivery
-     * @param \ZipArchive $zipArchive
+     * @return \oat\oatbox\filesystem\File
      * @throws \Exception
+     * @throws \common_Exception
      */
-    protected function doExportCompiledDelivery($path, core_kernel_classes_Resource $compiledDelivery, \ZipArchive $zipArchive)
+    public function exportCompiledDelivery(core_kernel_classes_Resource $compiledDelivery)
     {
-        parent::doExportCompiledDelivery($path, $compiledDelivery, $zipArchive);
+        if (!$compiledDelivery->exists()) {
+            throw new \common_exception_NotFound("Delivery with identifier '" . $compiledDelivery->getUri() . "' not found.");
+        }
+
+        /** @var AssemblerServiceInterface $assemblerService */
+        $assemblerService = $this->getServiceLocator()->get(AssemblerServiceInterface::SERVICE_ID);
+        $path = $assemblerService->exportCompiledDelivery($compiledDelivery);
+
+        $zipArchive = new \ZipArchive();
+        $zipArchive->open($path, \ZipArchive::CREATE);
 
         $this->logDebug("Transforming Delivery Assembly '" . $compiledDelivery->getUri() . "' into a Mobile Assembly...");
 
@@ -74,6 +82,22 @@ class MobileAssemblerService extends AssemblerService
 
             // 6. Delete execution data.
             $this->removeExecutionData($deliveryExecution, $runnerContext);
+
+            $zipArchive->close();
+
+            /** @var FileSystemService $fileSystemService */
+            $storagePath = self::fsExportPath($compiledDelivery->getUri());
+            $fileSystemService = $this->getServiceLocator()->get(FileSystemService::SERVICE_ID);
+            $directory = $fileSystemService->getDirectory('mobileAssemblyExport');
+            $file = $directory->getFile($storagePath);
+
+            if (!$file->exists()) {
+                $handle = fopen($path, 'r');
+                $file->put($handle);
+                fclose($handle);
+            }
+
+            return $file;
 
         } catch (\Exception $e) {
             throw new \common_Exception(
@@ -169,5 +193,10 @@ class MobileAssemblerService extends AssemblerService
             $runnerServiceContext->getTestSession()
         );
         $deleteDeliveryExecutionService->execute($deleteDeliveryExecutionRequest);
+    }
+
+    private static function fsExportPath($deliveryIdentifier)
+    {
+        return md5($deliveryIdentifier) . '.zip';
     }
 }

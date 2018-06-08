@@ -5,7 +5,7 @@
 
 namespace oat\taoMobileApp\controller;
 
-use oat\taoDeliveryRdf\model\AssemblerServiceInterface;
+use oat\taoMobileApp\model\assemblies\MobileAssembler;
 
 class MobileServices extends \tao_actions_RestController
 {
@@ -42,26 +42,14 @@ class MobileServices extends \tao_actions_RestController
         }
 
         try {
-            /** @var AssemblerServiceInterface $assemblerService */
-            $assemblerService = $this->getServiceLocator()->get(AssemblerServiceInterface::SERVICE_ID);
-            $fsDirectory = $assemblerService->getExportDirectory();
+            /** @var MobileAssembler $mobileAssembler */
+            $mobileAssembler = $this->getServiceLocator()->get(MobileAssembler::SERVICE_ID);
+            $data = $mobileAssembler->exportCompiledDelivery($deliveryResource);
 
-            // Export mobile assembly in shared file system (if not already done).
-            $fsExportPath = self::fsExportPath($deliveryIdentifier);
-            $fsFile = $fsDirectory->getFile($fsExportPath);
-            if (!$fsFile->exists()) {
-                $assemblerService->exportCompiledDelivery($deliveryResource, $fsExportPath);
-            }
+            \tao_helpers_Http::returnStream($data->readPsrStream());
 
-            // Return archive to invoker.
-            \tao_helpers_Http::returnStream($fsFile->readPsrStream());
         } catch (\Exception $e) {
             $this->returnFailure($e);
         }
-    }
-
-    private static function fsExportPath($deliveryIdentifier)
-    {
-        return md5($deliveryIdentifier) . '.zip';
     }
 }
