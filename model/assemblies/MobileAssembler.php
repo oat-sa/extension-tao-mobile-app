@@ -42,6 +42,10 @@ class MobileAssembler extends ConfigurableService
      */
     public function exportCompiledDelivery(core_kernel_classes_Resource $compiledDelivery)
     {
+        if (!$compiledDelivery->exists()) {
+            throw new \common_exception_NotFound("Delivery with identifier '" . $compiledDelivery->getUri() . "' not found.");
+        }
+
         /** @var AssemblerServiceInterface $assemblerService */
         $assemblerService = $this->getServiceLocator()->get(AssemblerServiceInterface::SERVICE_ID);
         $path = $assemblerService->exportCompiledDelivery($compiledDelivery);
