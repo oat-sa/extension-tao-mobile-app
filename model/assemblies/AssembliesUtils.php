@@ -29,9 +29,9 @@ class AssembliesUtils
     public static function transformToMobileAssembly(\ZipArchive $zipArchive)
     {
         $files = \tao_helpers_File::getAllZipNames($zipArchive);
-        $manifest = json_decode($zipArchive->getFromName('manifest.json'), true);
-        $map = self::sortItemAssemblyFiles($zipArchive, $files, $manifest);
         $testDefinition = self::getTestDefinition($zipArchive, $files);
+        $manifest = json_decode($zipArchive->getFromName('manifest.json'), true);
+        $map = self::sortItemAssemblyFiles($testDefinition->getDocumentComponent(), $files, $manifest);
 
         $renameMap = [];
         foreach ($map as $privatePath => $publicPath) {
@@ -79,55 +79,30 @@ class AssembliesUtils
     }
 
     /**
-     * @param \ZipArchive $zipArchive
+     * @param AssessmentTest $assessmentTest
      * @param array $files
      * @param array $manifest
      * @return array
      */
-    private static function sortItemAssemblyFiles(\ZipArchive $zipArchive, array $files, array $manifest)
+    private static function sortItemAssemblyFiles(AssessmentTest $assessmentTest, array $files, array $manifest)
     {
-        $keys = array_keys($manifest['dir']);
         $map = [];
 
-        for ($i = 0; $i < count($keys); $i++) {
-            if (preg_match('/-$/', $keys[$i]) === 1) {
-                // Private directory.
-                $zipPath = $manifest['dir'][$keys[$i]];
-                if (self::isItemPrivateDirectory($files, $zipPath)) {
-                    $map[$zipPath] = null;
+        foreach ($assessmentTest->getComponentsByClassName('assessmentItemRef') as $assessmentItemRef) {
+            $href = $assessmentItemRef->getHref();
+            $hrefValues = explode('|', $href);
+            list( , $public, $private) = $hrefValues;
 
-                    if (isset($keys[$i + 1])) {
-                        $nextZipPath = $manifest['dir'][$keys[$i + 1]];
+            if (isset($manifest['dir'][$private])) {
+                $map[$manifest['dir'][$private]] = null;
 
-                        if (self::isDirectoryAvailable($files, $nextZipPath) || self::isItemPrivateDirectory($files, $nextZipPath)) {
-                            $map[$zipPath] = $nextZipPath;
-                        }
-                    }
+                if (isset($manifest['dir'][$public]) && self::isDirectoryAvailable($files, $manifest['dir'][$public])) {
+                    $map[$manifest['dir'][$private]] = $manifest['dir'][$public];
                 }
             }
         }
 
         return $map;
-    }
-
-    /**
-     * @param array $zipFiles
-     * @param string $path
-     * @return bool
-     */
-    private static function isItemPrivateDirectory(array $zipFiles, $path)
-    {
-        foreach ($zipFiles as $zipFile) {
-            $quotedPath = preg_quote($path . '/', '/');
-            $quotedItem = preg_quote('/item.json', '/');
-            $pattern = "/^${quotedPath}\w+-\w+${quotedItem}/";
-
-            if (preg_match($pattern, $zipFile) === 1) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -202,7 +177,8 @@ class AssembliesUtils
         foreach ($zipFiles as $zipFile) {
             if (preg_match('/' . preg_quote(\taoQtiTest_models_classes_QtiTestService::TEST_COMPILED_FILENAME) . '$/', $zipFile) === 1) {
                 $testDefinition = new PhpDocument();
-                $testDefinition->loadFromString($zipArchive->getFromName($zipFile));
+                $content = $zipArchive->getFromName($zipFile);
+                $testDefinition->loadFromString($content);
 
                 return $testDefinition;
             }
