@@ -5,6 +5,9 @@
 
 namespace oat\taoMobileApp\scripts\update;
 
+use oat\taoDelivery\model\execution\Delete\DeliveryExecutionDeleteService;
+use oat\taoMobileApp\model\assemblies\MobileAssemblerService;
+
 /**
  * TAO Mobile App Extension Updater.
  * 
@@ -24,6 +27,6 @@ class Updater extends \common_ext_ExtensionUpdater {
      * @return void
      */
     public function update($initialVersion) {
-        
+
     }
 }

@@ -11,9 +11,25 @@ return [
     'version' => '0.1.0',
     'author' => 'Open Assessment Technologies',
     'requires' => [
-        'tao' => '>=19.1.0'
+        'taoCe' => '>=3.18.0',
+        'tao' => '>=19.1.0',
+        'taoQtiTest' => '>=25.7.0',
+        'taoDelivery' => '>=9.12.0',
+        'taoDeliveryRdf' => '>=5.0.0'
     ],
-    'acl' => [],
-    'routes' => [],
-    'update' => 'oat\\taoMobileApp\\scripts\\update\\Updater'
+    'install' => [
+        'php' => [
+            oat\taoQtiTest\scripts\install\SetNewTestRunner::class,
+            oat\taoMobileApp\scripts\install\RegisterDeleteDeliveryExecutionService::class,
+            oat\taoMobileApp\scripts\install\RegisterFileSystem::class
+        ]
+    ],
+    'acl' => [
+        ['grant', 'http://www.tao.lu/Ontologies/TAOMobileApp.rdf#TaoMobileAppManagerRole', ['ext'=>'taoMobileApp']]
+    ],
+    'routes' => [
+        '/taoMobileApp' => 'oat\\taoMobileApp\\controller'
+    ],
+    'update' => 'oat\\taoMobileApp\\scripts\\update\\Updater',
+    'managementRole' => 'http://www.tao.lu/Ontologies/TAOMobileApp.rdf#TaoMobileAppManagerRole'
 ];
