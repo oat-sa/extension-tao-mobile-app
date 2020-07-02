@@ -13,6 +13,8 @@ use oat\taoMobileApp\model\assemblies\MobileAssemblerService;
  *
  * This class provides an implementation of the Generis
  * Extension Updater aiming at updating the TAO Mobile App Extension.
+ *
+ * @deprecated use migrations instead. See https://github.com/oat-sa/generis/wiki/Tao-Update-Process
  */
 class Updater extends \common_ext_ExtensionUpdater {
 
@@ -29,5 +31,7 @@ class Updater extends \common_ext_ExtensionUpdater {
     public function update($initialVersion) {
 
         $this->skip('0.0.0', '1.0.0');
+
+        $this->setVersion($this->getExtension()->getManifest()->getVersion());
     }
 }
